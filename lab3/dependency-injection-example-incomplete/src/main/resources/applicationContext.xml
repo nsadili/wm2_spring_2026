@@ -5,4 +5,28 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 
+<!--    <bean id="orderBean" class="az.edu.ada.wm2.dependency_injection_example.beans.Order">-->
+<!--        <property name="id" value="ORD001"/>-->
+<!--        <property name="total" value="1200.0"/>-->
+<!--        &lt;!&ndash; owner + products if needed &ndash;&gt;-->
+<!--    </bean>-->
+<!--    <bean id="productBean" class="az.edu.ada.wm2.dependency_injection_example.beans.Product">-->
+
+<!--        <property name="id" value="P001"/>-->
+
+<!--        <property name="name" value="Laptop"/>-->
+
+<!--        <property name="price" value="1200.00"/>-->
+
+<!--    </bean>-->
+<!--    <bean id="productBean2" class="az.edu.ada.wm2.dependency_injection_example.beans.Product">-->
+
+<!--        <property name="id" value="P002"/>-->
+
+<!--        <property name="name" value="Laptop"/>-->
+
+<!--        <property name="price" value="1200.00"/>-->
+
+<!--    </bean>-->
+
 </beans>
