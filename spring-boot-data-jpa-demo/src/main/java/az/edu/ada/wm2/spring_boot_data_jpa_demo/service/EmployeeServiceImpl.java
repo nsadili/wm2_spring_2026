@@ -1,8 +1,15 @@
 package az.edu.ada.wm2.spring_boot_data_jpa_demo.service;
 
+import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.dto.EmployeeRequestDto;
+import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.dto.EmployeeResponseDto;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.entity.DepartmentEntity;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.entity.EmployeeEntity;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.entity.SkillEntity;
+import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.mapper.AddressMapper;
+import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.mapper.DepartmentMapper;
+import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.mapper.EmployeeMapperV1;
+import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.mapper.EmployeeMapperV2;
+import az.edu.ada.wm2.spring_boot_data_jpa_demo.repository.AddressRepository;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.repository.DepartmentRepository;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.repository.EmployeeRepository;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.repository.SkillRepository;
@@ -23,42 +30,42 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
     private final SkillRepository skillRepository;
+    private final AddressRepository addressRepository;
 
     @Override
-    public List<EmployeeEntity> getAllEmps() {
-        return employeeRepository.findAll();
+    public List<EmployeeResponseDto> getAllEmps() {
+        return EmployeeMapperV2.INSTANCE.employeeEntitiesToEmployeeResponseDtos(employeeRepository.findAll());
     }
 
     @Override
-    public EmployeeEntity save(EmployeeEntity employeeEntity) {
-        // Handle Department - save if new, or fetch existing
-        if (employeeEntity.getDepartment() != null) {
-            DepartmentEntity dept = employeeEntity.getDepartment();
-            final DepartmentEntity departmentToSave = dept;
+    public EmployeeResponseDto save(EmployeeRequestDto employeeRequestDto) {
+        //map address of the employee and save
+        var addressToSave = employeeRequestDto.getAddressRequestDto();
+        var savedAddress = addressRepository.save(
+                AddressMapper.INSTANCE.addressDtoToAddressEntity(
+                        addressToSave));
 
-            if (dept.getId() == null) {
-                // Check if department with same name exists
-                Optional<DepartmentEntity> existingDept = departmentRepository
-                        .findByNameIgnoreCase(dept.getName());
-                dept = existingDept.orElseGet(() -> departmentRepository.save(departmentToSave));
-            } else {
-                dept = departmentRepository.findById(dept.getId())
-                        .orElseThrow(() -> new RuntimeException("Department not found"));
-            }
-            employeeEntity.setDepartment(dept);
+        var deptReqDto = employeeRequestDto.getDepartmentRequestDto();
+        DepartmentEntity savedDepartment = null;
+        if (deptReqDto.getId() == null) {
+            //incoming dept has no id, create it
+            savedDepartment = departmentRepository.save(
+                    DepartmentMapper.INSTANCE
+                            .employeeDepartmentRequestDtoToDepartmentEntity(deptReqDto));
+        }else{
+            var deptEnt = departmentRepository.findById(deptReqDto.getId());
+            savedDepartment = deptEnt.orElseGet(() -> departmentRepository.save(
+                    DepartmentMapper.INSTANCE
+                            .employeeDepartmentRequestDtoToDepartmentEntity(deptReqDto)));
         }
-
-        // Handle Address (cascade saves automatically with CascadeType.ALL)
-        if (employeeEntity.getAddress() != null) {
-            employeeEntity.getAddress().setEmployee(employeeEntity);
-        }
-
         // TODO: Handle Skills - Save skills FIRST, then set on employee
-//        employeeEntity.getSkills().stream()
-//                .map(SkillEntity::getName)
-//                .forEach(System.out::println);
 
-        return employeeRepository.save(employeeEntity);
+        //TODO: map employeeEntityRequestDto to employeeEntity
+        //TODO: set savedAddress and savedDepartment
+        //TODO: save the employee
+
+
+        return null;
 
     }
 
