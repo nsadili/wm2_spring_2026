@@ -4,7 +4,12 @@ import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.dto.EmployeeRequestDto;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.dto.EmployeeResponseDto;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.entity.EmployeeEntity;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.service.EmployeeService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,8 +29,16 @@ public class EmployeeController {
 
     //    @RequestMapping(value = "/list", method = RequestMethod.GET)
     @GetMapping
-    public List<EmployeeResponseDto> listAll() {
-        return employeeService.getAllEmps();
+    public Page<@NonNull EmployeeResponseDto> listAll(
+            @RequestParam(defaultValue = "0") int pageNo,
+            @RequestParam(defaultValue = "5") int limit,
+            @RequestParam(defaultValue = "firstName") String sortBy
+    ) {
+        var pageable = PageRequest.of(pageNo,
+                limit,
+                Sort.by(sortBy).ascending());
+
+        return employeeService.getAllEmps(pageable);
     }
 
     @GetMapping("/{id}")

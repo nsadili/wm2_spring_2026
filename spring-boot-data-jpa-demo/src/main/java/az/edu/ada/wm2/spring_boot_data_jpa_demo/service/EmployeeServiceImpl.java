@@ -13,9 +13,12 @@ import az.edu.ada.wm2.spring_boot_data_jpa_demo.repository.AddressRepository;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.repository.DepartmentRepository;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.repository.EmployeeRepository;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.repository.SkillRepository;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -33,8 +36,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final AddressRepository addressRepository;
 
     @Override
-    public List<EmployeeResponseDto> getAllEmps() {
-        return EmployeeMapperV2.INSTANCE.employeeEntitiesToEmployeeResponseDtos(employeeRepository.findAll());
+    public Page<@NonNull EmployeeResponseDto> getAllEmps(Pageable pageable) {
+        var employeeEntitiesPage = employeeRepository.findAll(pageable);
+
+        return employeeEntitiesPage.map(EmployeeMapperV2.INSTANCE::employeeEntityToEmployeeResponseDto);
+
     }
 
     @Override
@@ -52,7 +58,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             savedDepartment = departmentRepository.save(
                     DepartmentMapper.INSTANCE
                             .employeeDepartmentRequestDtoToDepartmentEntity(deptReqDto));
-        }else{
+        } else {
             var deptEnt = departmentRepository.findById(deptReqDto.getId());
             savedDepartment = deptEnt.orElseGet(() -> departmentRepository.save(
                     DepartmentMapper.INSTANCE
