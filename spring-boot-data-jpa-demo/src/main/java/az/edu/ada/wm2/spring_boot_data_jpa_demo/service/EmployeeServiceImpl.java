@@ -6,9 +6,12 @@ import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.entity.SkillEntity;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.repository.DepartmentRepository;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.repository.EmployeeRepository;
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.repository.SkillRepository;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -25,8 +28,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final SkillRepository skillRepository;
 
     @Override
-    public List<EmployeeEntity> getAllEmps() {
-        return employeeRepository.findAll();
+    public Page<@NonNull EmployeeEntity> getAllEmps(Pageable pageable) {
+        return employeeRepository.findAll(pageable);
     }
 
     @Override

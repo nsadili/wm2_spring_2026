@@ -2,6 +2,8 @@ package az.edu.ada.wm2.spring_boot_data_jpa_demo.repository;
 
 import az.edu.ada.wm2.spring_boot_data_jpa_demo.model.entity.EmployeeEntity;
 import lombok.NonNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,9 +22,8 @@ public interface EmployeeRepository extends JpaRepository<@NonNull EmployeeEntit
             """, nativeQuery = true)
     List<EmployeeEntity> getEmployeeByLastName(String lastName);
 
-    @Query("select e from AddressEntity e where e.city like concat('%', :lastName, '%')")
-    List<EmployeeEntity> getEmployeeByLastNameV2(String lastName);
+    @Query("select e from EmployeeEntity e where e.address.city = :cityName")
+    Page<@NonNull EmployeeEntity> findEmployeesByCity(@Param("cityName") String city, Pageable pageable);
 
-    List<EmployeeEntity> findByFirstNameAndLastName(String firstName, String lastName);
 
 }
