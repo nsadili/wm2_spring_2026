@@ -39,7 +39,7 @@ public class EmployeeEntity {
     private AddressEntity address;
 
     @ManyToOne(fetch = FetchType.EAGER,
-                cascade = CascadeType.PERSIST)
+                cascade = CascadeType.MERGE)
     @JoinColumn(name = "dept_id", referencedColumnName = "id")
     // remove the property from the resulting JSON due to lazy loading
 //    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

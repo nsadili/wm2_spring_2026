@@ -16,6 +16,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class DataBootstraper {
 
+    @Bean
     public CommandLineRunner commandLineRunner(EmployeeRepository employeeRepository,
                                                DepartmentRepository departmentRepository) {
         return args -> {
@@ -23,8 +24,8 @@ public class DataBootstraper {
 
             //TODO: solve detached entity issue
             //save the department here
-//            var sb = departmentRepository.save(DepartmentEntity.builder().name("SB").build());
-//            var spia = departmentRepository.save(DepartmentEntity.builder().name("SPIA").build());
+            var sb = departmentRepository.save(DepartmentEntity.builder().name("BAPA").build());
+            var spia = departmentRepository.save(DepartmentEntity.builder().name("SPIA").build());
 
             var site = departmentRepository.findById(1L).orElseThrow();
 
@@ -40,12 +41,12 @@ public class DataBootstraper {
                             .city("Baku")
                             .country("Azerbaijan")
                             .build())
-                    .department(DepartmentEntity.builder().name("SITE").build())
+                    .department(site)
                     .build();
             System.out.println(employeeRepository.save(employeeEntity));
 
             EmployeeEntity employeeEntity2 = EmployeeEntity.builder()
-                    .firstName("Nurlana")
+                    .firstName("Nurlanaaaa")
                     .lastName("Ismayilova")
                     .email("nismayilova@gmail.com")
                     .salary(3214.0)
@@ -55,7 +56,7 @@ public class DataBootstraper {
                             .city("Baku")
                             .country("Azerbaijan")
                             .build())
-                    .department(DepartmentEntity.builder().name("SB").build())
+                    .department(sb)
                     .build();
             System.out.println(employeeRepository.save(employeeEntity2));
 
@@ -70,7 +71,7 @@ public class DataBootstraper {
                             .city("Sumgayit")
                             .country("Azerbaijan")
                             .build())
-                    .department(DepartmentEntity.builder().name("SPIA").build())
+                    .department(spia)
                     .build();
             System.out.println(employeeRepository.save(employeeEntity3));
 
